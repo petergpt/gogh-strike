@@ -16,13 +16,13 @@ test('complete shipped GLB passes unchanged; a short BIN is rejected before pars
 
 test('a partial successful HTTP response retries uncached and returns only the complete model',async()=>{
  const requests=[],notices=[];
- const result=await downloadModel('/assets/characters/van-gogh-head.glb',{
+ const result=await downloadModel('/assets/characters/van-gogh-head.glb?v=2',{
   onRetry:error=>notices.push(error.message),
   fetchImpl:async(url,options)=>{requests.push({url,cache:options.cache});return {ok:true,arrayBuffer:async()=>requests.length===1?truncated:full};},
  });
  assert.equal(result,full);assert.equal(requests.length,2);assert.equal(notices.length,1);
  assert.equal(requests[0].cache,'no-cache');assert.equal(requests[1].cache,'no-store');
- assert.match(requests[1].url,/\.glb\?retry=\d+$/);
+ assert.match(requests[1].url,/\.glb\?v=2&retry=\d+$/);
 });
 
 test('persistent partial downloads fail after one retry with a named, actionable error',async()=>{
