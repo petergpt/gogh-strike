@@ -54,6 +54,8 @@
 !/docs/DEVELOPMENT.md
 !/docs/characters/
 !/docs/characters/*.md
+!/docs/screenshots/
+!/docs/screenshots/*.png
 **/.DS_Store
 **/__pycache__/
 **/*.pyc

@@ -1,22 +1,39 @@
 # Gogh Strike
 
-A painterly six-versus-six browser shooter through Van Gogh’s Town. Choose one of twelve artists, carry their signature weapon, and compete alongside five bots against a rival crew. First to 20 eliminations or the higher score after three minutes wins. Respawns take two seconds.
+**Twelve artists. Two rival crews. One paint fight.**
 
-[Play Gogh Strike](https://gogh-strike.surge.sh) · [Art-world guide](docs/ART-WORLD.md) · [Character design](docs/CHARACTER-DESIGN.md)
+A painterly six-versus-six browser shooter set in Van Gogh’s Town. Pick an artist, grab their signature weapon, and turn the café streets into a three-minute rivalry.
 
-## Play locally
+### [Play Gogh Strike →](https://gogh-strike.surge.sh/)
 
-Requires Node.js 20+ and a desktop browser with hardware-accelerated WebGL, a keyboard and a mouse.
+No install required · Desktop keyboard and mouse · Single-player with bots
 
-```sh
-git clone https://github.com/petergpt/gogh-strike.git
-cd gogh-strike
-npm start
-```
+![First-person gameplay on the golden café terrace, with rival artists, a Provençal rifle and the match HUD.](docs/screenshots/gameplay.png)
 
-Open **http://127.0.0.1:8967/**. The runtime and models are bundled; you do not need to install dependencies just to play. Use `PORT=8968 npm start` for another port. The first online load downloads approximately 36 MB of game assets; subsequent visits can reuse the browser cache.
+Join five bots against a rival crew. First to **20 eliminations**, or the higher score after **three minutes**, wins. Two-second respawns keep you in the fight. Sprint, slide, throw paint bursts, and leave your artist’s tag on the walls.
 
-Select **The Yellow House** or **The Independents**, pick an artist, and press **Play**. You can look around during the compact 3–2–1 opening while standing still. **Inspect artist** shows the same character models used in the game, including face, full-body, walking and crouching views.
+## Choose your artist
+
+Join **The Yellow House** or **The Independents**. Each artist comes with a signature primary weapon, a pistol, their own art tag and a victory dance. Pick your favourite and press **Play**—the compact 3–2–1 countdown lets you look around before the match begins.
+
+![The Independents artist selection, with Morisot selected, her Nocturne precision rifle and butterfly art tag.](docs/screenshots/choose-your-artist.png)
+
+## Meet the artists
+
+Get a closer look through **Inspect artist**. The studio uses the same models you meet in the game, with face, full-body, walking and crouching views.
+
+<p align="center">
+  <img src="docs/screenshots/artist-studio.png" width="720" alt="Van Gogh in the character studio, showing his straw hat, red beard, blue coat and signature weapon.">
+</p>
+
+| Weapon | The Yellow House | The Independents |
+| --- | --- | --- |
+| Provençal assault rifle | Van Gogh, Signac | Monet, Pissarro |
+| Mistral SMG | Gauguin, Toulouse-Lautrec | Renoir, Cassatt |
+| Harvester shotgun | Cézanne | Degas |
+| Nocturne precision rifle | Seurat | Morisot |
+
+All twelve have distinct builds, faces, clothes, movement weights, graffiti and dances. The artists are real; their teams, weapons, costumes and rivalry are imagined. Physiques are character-design interpretations, not authenticated measurements. Explore the references in the [art-world guide](docs/ART-WORLD.md), [character notes](docs/characters/) and [tag guide](docs/ARTIST-TAGS.md).
 
 ## Controls
 
@@ -38,16 +55,17 @@ Spawn with 100 displayed health and 50 armour. Eliminations restore up to 10 hea
 
 Settings control sensitivity, volume and brushwork quality. Switching apps pauses the match and clears held inputs. If the browser releases the mouse, click the resume prompt to capture it again. Mobile touch controls and online multiplayer are not implemented: this is a single-human game against bots.
 
-## Artists and crews
+## Play locally
 
-| Weapon | The Yellow House | The Independents |
-| --- | --- | --- |
-| Provençal assault rifle | Van Gogh, Signac | Monet, Pissarro |
-| Mistral SMG | Gauguin, Toulouse-Lautrec | Renoir, Cassatt |
-| Harvester shotgun | Cézanne | Degas |
-| Nocturne precision rifle | Seurat | Morisot |
+Requires Node.js 20+ and a desktop browser with hardware-accelerated WebGL, a keyboard and a mouse.
 
-All twelve have distinct builds, faces, clothes, movement weights, graffiti and dances. The artists are real; their teams, weapons, costumes and rivalry are imagined. Physiques are character-design interpretations, not authenticated measurements. Museum and letter references are documented in the [art-world guide](docs/ART-WORLD.md), [character notes](docs/characters/) and [tag guide](docs/ARTIST-TAGS.md).
+```sh
+git clone https://github.com/petergpt/gogh-strike.git
+cd gogh-strike
+npm start
+```
+
+Open **http://127.0.0.1:8967/**. The runtime and models are bundled; you do not need to install dependencies just to play. Use `PORT=8968 npm start` for another port. The first online load downloads approximately 36 MB of game assets; subsequent visits can reuse the browser cache.
 
 ## Develop and deploy
 
