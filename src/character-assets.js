@@ -1,6 +1,7 @@
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {CHARACTER_DESIGNS} from './character-designs/index.js';
 import {refinePortraitMaterial} from './character-lighting.js';
+import {downloadModel} from './model-download.js';
 const portraits=new Map();
 const loader=new GLTFLoader();
 // Only the four content-addressed character images are shared. Retaining GLB
@@ -28,7 +29,11 @@ loader.register(parser=>{
 let loading;
 export function loadCharacterAssets(){
  if(!loading)loading=Promise.all(Object.values(CHARACTER_DESIGNS).map(async design=>{
-  const gltf=await loader.loadAsync(`/assets/characters/${design.id}-head.glb`);
+  const buffer=await downloadModel(`/assets/characters/${design.id}-head.glb`,{
+   name:design.id.replaceAll('-',' '),
+   onRetry:error=>console.warn(`Retrying ${design.id} model download: ${error.message}`),
+  });
+  const gltf=await loader.parseAsync(buffer,'/assets/characters/');
   portraits.set(design.id,gltf.scene);
  })).catch(error=>{loading=undefined;throw error;});
  return loading;
