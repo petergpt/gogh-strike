@@ -1,0 +1,26 @@
+{
+  "name": "van-gogh-strike",
+  "version": "8.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test tests/*.test.js",
+    "verify:source": "shasum -a 256 reference/van-goghs-town.original.html",
+    "build": "node tools/build-site.mjs",
+    "optimize:characters": "node tools/optimize-character-assets.mjs"
+  },
+  "dependencies": {
+    "three": "0.170.0"
+  },
+  "description": "A painterly six-versus-six browser shooter with twelve historical artists.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/petergpt/gogh-strike.git"
+  },
+  "homepage": "https://gogh-strike.surge.sh"
+}

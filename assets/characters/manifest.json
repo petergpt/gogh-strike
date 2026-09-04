@@ -1,0 +1,562 @@
+{
+  "pipeline": "Blender sculpted heads with live articulated game bodies",
+  "characters": [
+    {
+      "id": "van-gogh",
+      "name": "Van Gogh",
+      "file": "van-gogh-head.glb",
+      "bytes": 1921068,
+      "triangles": 61141,
+      "meshes": 18,
+      "surface": {
+        "version": 1,
+        "rays": 20,
+        "maxDistance": 0.038,
+        "bias": 0.00055,
+        "skinStrength": 0.28,
+        "groomStrength": 0.3,
+        "seconds": 0.738,
+        "meshes": [
+          {
+            "mesh": "Van Gogh_authored_skin",
+            "kind": "skin",
+            "vertices": 17096,
+            "meanOcclusion": 0.25215,
+            "meanMultiplier": 0.9294,
+            "minimumMultiplier": 0.72326
+          },
+          {
+            "mesh": "Van Gogh_groom_beard",
+            "kind": "groom",
+            "vertices": 3378,
+            "meanOcclusion": 0.30198,
+            "meanMultiplier": 0.90941,
+            "minimumMultiplier": 0.70962
+          },
+          {
+            "mesh": "Van Gogh_groom_hair",
+            "kind": "groom",
+            "vertices": 2713,
+            "meanOcclusion": 0.22255,
+            "meanMultiplier": 0.93324,
+            "minimumMultiplier": 0.70749
+          }
+        ]
+      },
+      "detailTriangles": 49324,
+      "distanceTriangles": 11817
+    },
+    {
+      "id": "gauguin",
+      "name": "Gauguin",
+      "file": "gauguin-head.glb",
+      "bytes": 1830920,
+      "triangles": 57777,
+      "meshes": 18,
+      "surface": {
+        "version": 1,
+        "rays": 20,
+        "maxDistance": 0.038,
+        "bias": 0.00055,
+        "skinStrength": 0.28,
+        "groomStrength": 0.3,
+        "seconds": 0.8,
+        "meshes": [
+          {
+            "mesh": "Gauguin_authored_skin",
+            "kind": "skin",
+            "vertices": 17096,
+            "meanOcclusion": 0.2266,
+            "meanMultiplier": 0.93655,
+            "minimumMultiplier": 0.72259
+          },
+          {
+            "mesh": "Gauguin_groom_beard",
+            "kind": "groom",
+            "vertices": 590,
+            "meanOcclusion": 0.4794,
+            "meanMultiplier": 0.85618,
+            "minimumMultiplier": 0.71179
+          },
+          {
+            "mesh": "Gauguin_groom_hair",
+            "kind": "groom",
+            "vertices": 4078,
+            "meanOcclusion": 0.26314,
+            "meanMultiplier": 0.92106,
+            "minimumMultiplier": 0.70832
+          }
+        ]
+      },
+      "detailTriangles": 46620,
+      "distanceTriangles": 11157
+    },
+    {
+      "id": "cezanne",
+      "name": "Cézanne",
+      "file": "cezanne-head.glb",
+      "bytes": 1920428,
+      "triangles": 60829,
+      "meshes": 18,
+      "surface": {
+        "version": 1,
+        "rays": 20,
+        "maxDistance": 0.038,
+        "bias": 0.00055,
+        "skinStrength": 0.28,
+        "groomStrength": 0.3,
+        "seconds": 0.786,
+        "meshes": [
+          {
+            "mesh": "Cézanne_authored_skin",
+            "kind": "skin",
+            "vertices": 17096,
+            "meanOcclusion": 0.22211,
+            "meanMultiplier": 0.93781,
+            "minimumMultiplier": 0.7243
+          },
+          {
+            "mesh": "Cézanne_groom_beard",
+            "kind": "groom",
+            "vertices": 4170,
+            "meanOcclusion": 0.33874,
+            "meanMultiplier": 0.89838,
+            "minimumMultiplier": 0.70643
+          },
+          {
+            "mesh": "Cézanne_groom_hair",
+            "kind": "groom",
+            "vertices": 2133,
+            "meanOcclusion": 0.31056,
+            "meanMultiplier": 0.90683,
+            "minimumMultiplier": 0.71477
+          }
+        ]
+      },
+      "detailTriangles": 49072,
+      "distanceTriangles": 11757
+    },
+    {
+      "id": "seurat",
+      "name": "Seurat",
+      "file": "seurat-head.glb",
+      "bytes": 2069764,
+      "triangles": 66055,
+      "meshes": 18,
+      "surface": {
+        "version": 1,
+        "rays": 20,
+        "maxDistance": 0.038,
+        "bias": 0.00055,
+        "skinStrength": 0.28,
+        "groomStrength": 0.3,
+        "seconds": 0.847,
+        "meshes": [
+          {
+            "mesh": "Seurat_authored_skin",
+            "kind": "skin",
+            "vertices": 17096,
+            "meanOcclusion": 0.24983,
+            "meanMultiplier": 0.93005,
+            "minimumMultiplier": 0.72346
+          },
+          {
+            "mesh": "Seurat_groom_beard",
+            "kind": "groom",
+            "vertices": 3882,
+            "meanOcclusion": 0.37236,
+            "meanMultiplier": 0.88829,
+            "minimumMultiplier": 0.7088
+          },
+          {
+            "mesh": "Seurat_groom_hair",
+            "kind": "groom",
+            "vertices": 4369,
+            "meanOcclusion": 0.31017,
+            "meanMultiplier": 0.90695,
+            "minimumMultiplier": 0.70617
+          }
+        ]
+      },
+      "detailTriangles": 53284,
+      "distanceTriangles": 12771
+    },
+    {
+      "id": "signac",
+      "name": "Signac",
+      "file": "signac-head.glb",
+      "bytes": 1974204,
+      "triangles": 63055,
+      "meshes": 18,
+      "surface": {
+        "version": 1,
+        "rays": 20,
+        "maxDistance": 0.038,
+        "bias": 0.00055,
+        "skinStrength": 0.28,
+        "groomStrength": 0.3,
+        "seconds": 0.784,
+        "meshes": [
+          {
+            "mesh": "Signac_authored_skin",
+            "kind": "skin",
+            "vertices": 17096,
+            "meanOcclusion": 0.25446,
+            "meanMultiplier": 0.92875,
+            "minimumMultiplier": 0.72213
+          },
+          {
+            "mesh": "Signac_groom_beard",
+            "kind": "groom",
+            "vertices": 4002,
+            "meanOcclusion": 0.32862,
+            "meanMultiplier": 0.90141,
+            "minimumMultiplier": 0.7105
+          },
+          {
+            "mesh": "Signac_groom_hair",
+            "kind": "groom",
+            "vertices": 2929,
+            "meanOcclusion": 0.23974,
+            "meanMultiplier": 0.92808,
+            "minimumMultiplier": 0.70546
+          }
+        ]
+      },
+      "detailTriangles": 50864,
+      "distanceTriangles": 12191
+    },
+    {
+      "id": "lautrec",
+      "name": "Toulouse-Lautrec",
+      "file": "lautrec-head.glb",
+      "bytes": 1957812,
+      "triangles": 62162,
+      "meshes": 20,
+      "surface": {
+        "version": 1,
+        "rays": 20,
+        "maxDistance": 0.038,
+        "bias": 0.00055,
+        "skinStrength": 0.28,
+        "groomStrength": 0.3,
+        "seconds": 0.864,
+        "meshes": [
+          {
+            "mesh": "Toulouse-Lautrec_authored_skin",
+            "kind": "skin",
+            "vertices": 17096,
+            "meanOcclusion": 0.25856,
+            "meanMultiplier": 0.9276,
+            "minimumMultiplier": 0.72487
+          },
+          {
+            "mesh": "Toulouse-Lautrec_groom_beard",
+            "kind": "groom",
+            "vertices": 3258,
+            "meanOcclusion": 0.30289,
+            "meanMultiplier": 0.90913,
+            "minimumMultiplier": 0.71297
+          },
+          {
+            "mesh": "Toulouse-Lautrec_groom_hair",
+            "kind": "groom",
+            "vertices": 2905,
+            "meanOcclusion": 0.25955,
+            "meanMultiplier": 0.92214,
+            "minimumMultiplier": 0.71333
+          }
+        ]
+      },
+      "detailTriangles": 50156,
+      "distanceTriangles": 12006
+    },
+    {
+      "id": "monet",
+      "name": "Monet",
+      "file": "monet-head.glb",
+      "bytes": 1976820,
+      "triangles": 62986,
+      "meshes": 18,
+      "surface": {
+        "version": 1,
+        "rays": 20,
+        "maxDistance": 0.038,
+        "bias": 0.00055,
+        "skinStrength": 0.28,
+        "groomStrength": 0.3,
+        "seconds": 1.194,
+        "meshes": [
+          {
+            "mesh": "Monet_authored_skin",
+            "kind": "skin",
+            "vertices": 17096,
+            "meanOcclusion": 0.25047,
+            "meanMultiplier": 0.92987,
+            "minimumMultiplier": 0.72247
+          },
+          {
+            "mesh": "Monet_groom_beard",
+            "kind": "groom",
+            "vertices": 4050,
+            "meanOcclusion": 0.32962,
+            "meanMultiplier": 0.90111,
+            "minimumMultiplier": 0.71174
+          },
+          {
+            "mesh": "Monet_groom_hair",
+            "kind": "groom",
+            "vertices": 2855,
+            "meanOcclusion": 0.24233,
+            "meanMultiplier": 0.9273,
+            "minimumMultiplier": 0.70815
+          }
+        ]
+      },
+      "detailTriangles": 50816,
+      "distanceTriangles": 12170
+    },
+    {
+      "id": "renoir",
+      "name": "Renoir",
+      "file": "renoir-head.glb",
+      "bytes": 2010848,
+      "triangles": 64037,
+      "meshes": 18,
+      "surface": {
+        "version": 1,
+        "rays": 20,
+        "maxDistance": 0.038,
+        "bias": 0.00055,
+        "skinStrength": 0.28,
+        "groomStrength": 0.3,
+        "seconds": 1.261,
+        "meshes": [
+          {
+            "mesh": "Renoir_authored_skin",
+            "kind": "skin",
+            "vertices": 17096,
+            "meanOcclusion": 0.24196,
+            "meanMultiplier": 0.93225,
+            "minimumMultiplier": 0.72295
+          },
+          {
+            "mesh": "Renoir_groom_beard",
+            "kind": "groom",
+            "vertices": 2994,
+            "meanOcclusion": 0.29355,
+            "meanMultiplier": 0.91193,
+            "minimumMultiplier": 0.70839
+          },
+          {
+            "mesh": "Renoir_groom_hair",
+            "kind": "groom",
+            "vertices": 4367,
+            "meanOcclusion": 0.30961,
+            "meanMultiplier": 0.90712,
+            "minimumMultiplier": 0.70829
+          }
+        ]
+      },
+      "detailTriangles": 51652,
+      "distanceTriangles": 12385
+    },
+    {
+      "id": "degas",
+      "name": "Degas",
+      "file": "degas-head.glb",
+      "bytes": 1849724,
+      "triangles": 58387,
+      "meshes": 18,
+      "surface": {
+        "version": 1,
+        "rays": 20,
+        "maxDistance": 0.038,
+        "bias": 0.00055,
+        "skinStrength": 0.28,
+        "groomStrength": 0.3,
+        "seconds": 0.867,
+        "meshes": [
+          {
+            "mesh": "Degas_authored_skin",
+            "kind": "skin",
+            "vertices": 17096,
+            "meanOcclusion": 0.22569,
+            "meanMultiplier": 0.93681,
+            "minimumMultiplier": 0.72859
+          },
+          {
+            "mesh": "Degas_groom_beard",
+            "kind": "groom",
+            "vertices": 3090,
+            "meanOcclusion": 0.29518,
+            "meanMultiplier": 0.91145,
+            "minimumMultiplier": 0.71132
+          },
+          {
+            "mesh": "Degas_groom_hair",
+            "kind": "groom",
+            "vertices": 2133,
+            "meanOcclusion": 0.30852,
+            "meanMultiplier": 0.90744,
+            "minimumMultiplier": 0.71261
+          }
+        ]
+      },
+      "detailTriangles": 47092,
+      "distanceTriangles": 11295
+    },
+    {
+      "id": "morisot",
+      "name": "Morisot",
+      "file": "morisot-head.glb",
+      "bytes": 1708112,
+      "triangles": 54003,
+      "meshes": 16,
+      "surface": {
+        "version": 1,
+        "rays": 20,
+        "maxDistance": 0.038,
+        "bias": 0.00055,
+        "skinStrength": 0.28,
+        "groomStrength": 0.3,
+        "seconds": 0.602,
+        "meshes": [
+          {
+            "mesh": "Morisot_authored_skin",
+            "kind": "skin",
+            "vertices": 17096,
+            "meanOcclusion": 0.206,
+            "meanMultiplier": 0.94232,
+            "minimumMultiplier": 0.72567
+          },
+          {
+            "mesh": "Morisot_groom_hair",
+            "kind": "groom",
+            "vertices": 2927,
+            "meanOcclusion": 0.20773,
+            "meanMultiplier": 0.93768,
+            "minimumMultiplier": 0.70925
+          }
+        ]
+      },
+      "detailTriangles": 43576,
+      "distanceTriangles": 10427
+    },
+    {
+      "id": "pissarro",
+      "name": "Pissarro",
+      "file": "pissarro-head.glb",
+      "bytes": 1944144,
+      "triangles": 61377,
+      "meshes": 20,
+      "surface": {
+        "version": 1,
+        "rays": 20,
+        "maxDistance": 0.038,
+        "bias": 0.00055,
+        "skinStrength": 0.28,
+        "groomStrength": 0.3,
+        "seconds": 0.865,
+        "meshes": [
+          {
+            "mesh": "Pissarro_authored_skin",
+            "kind": "skin",
+            "vertices": 17096,
+            "meanOcclusion": 0.22726,
+            "meanMultiplier": 0.93637,
+            "minimumMultiplier": 0.73217
+          },
+          {
+            "mesh": "Pissarro_groom_beard",
+            "kind": "groom",
+            "vertices": 4026,
+            "meanOcclusion": 0.33087,
+            "meanMultiplier": 0.90074,
+            "minimumMultiplier": 0.71122
+          },
+          {
+            "mesh": "Pissarro_groom_hair",
+            "kind": "groom",
+            "vertices": 2133,
+            "meanOcclusion": 0.31611,
+            "meanMultiplier": 0.90517,
+            "minimumMultiplier": 0.71267
+          }
+        ]
+      },
+      "detailTriangles": 49508,
+      "distanceTriangles": 11869
+    },
+    {
+      "id": "cassatt",
+      "name": "Cassatt",
+      "file": "cassatt-head.glb",
+      "bytes": 1769064,
+      "triangles": 56026,
+      "meshes": 16,
+      "surface": {
+        "version": 1,
+        "rays": 20,
+        "maxDistance": 0.038,
+        "bias": 0.00055,
+        "skinStrength": 0.28,
+        "groomStrength": 0.3,
+        "seconds": 0.661,
+        "meshes": [
+          {
+            "mesh": "Cassatt_authored_skin",
+            "kind": "skin",
+            "vertices": 17096,
+            "meanOcclusion": 0.20635,
+            "meanMultiplier": 0.94222,
+            "minimumMultiplier": 0.72247
+          },
+          {
+            "mesh": "Cassatt_groom_hair",
+            "kind": "groom",
+            "vertices": 3827,
+            "meanOcclusion": 0.24617,
+            "meanMultiplier": 0.92615,
+            "minimumMultiplier": 0.70877
+          }
+        ]
+      },
+      "detailTriangles": 45212,
+      "distanceTriangles": 10814
+    }
+  ],
+  "optimization": {
+    "method": "Lossless shared external PNG textures; embedded geometry and all image bytes preserved",
+    "characterCount": 12,
+    "uniqueTextures": 4,
+    "beforeBytes": 66545364,
+    "headBytes": 22932908,
+    "textureBytes": 3634416,
+    "afterBytes": 26567324,
+    "savedBytes": 39978040,
+    "reductionPercent": 60.076,
+    "textures": [
+      {
+        "file": "textures/a0476c7247fbf736cdfc423dd8ef840bca5f9e16b5b78a54079e93a005fc84f8.png",
+        "bytes": 1011270,
+        "sha256": "a0476c7247fbf736cdfc423dd8ef840bca5f9e16b5b78a54079e93a005fc84f8"
+      },
+      {
+        "file": "textures/b13447a932790866c0ad715becf4a38d5aa7e8f3f7b0369e571080e150c555f7.png",
+        "bytes": 217484,
+        "sha256": "b13447a932790866c0ad715becf4a38d5aa7e8f3f7b0369e571080e150c555f7"
+      },
+      {
+        "file": "textures/c8ed3a3d669ceac411ae7119b18a6b88f9f497ab0c14fc1aadad2a6fa2323c2d.png",
+        "bytes": 358218,
+        "sha256": "c8ed3a3d669ceac411ae7119b18a6b88f9f497ab0c14fc1aadad2a6fa2323c2d"
+      },
+      {
+        "file": "textures/fb833de1b4defbfeadddcde547c138175eb1c2344d35109eb904363ced6c25ea.png",
+        "bytes": 2047444,
+        "sha256": "fb833de1b4defbfeadddcde547c138175eb1c2344d35109eb904363ced6c25ea"
+      }
+    ]
+  }
+}

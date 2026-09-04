@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101a23">
+  <title>The artists · Van Gogh Strike</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23121b23'/%3E%3Cpath d='M13 44 25 15l7 24 15-26-6 36' fill='none' stroke='%23f1ca63' stroke-width='6'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./src/character-inspector.css">
+  <script type="importmap">{"imports":{"three":"/vendor/three.module.js","three/addons/":"/vendor/addons/"}}</script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100dvh; display: grid; place-items: center; background: radial-gradient(ellipse at 50% 15%, #23323c, #10171e 70%); color: #f3f2ec; font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { max-width: 470px; padding: 28px; text-align: center; }
+    .studio-eyebrow { color: #d3b667; font-size: 11px; font-weight: 650; letter-spacing: .16em; }
+    h1 { font-size: clamp(36px, 8vw, 54px); letter-spacing: -.055em; margin: 15px 0; font-weight: 650; }
+    p { color: #a9b7c1; line-height: 1.6; font-size: 14px; }
+    #open-studio { margin-top: 16px; padding: 13px 22px; background: #eed292; color: #1a242a; border: 0; border-radius: 11px; font: inherit; font-size: 14px; font-weight: 650; cursor: pointer; }
+    #open-studio:focus-visible { outline: 2px solid #f5e0af; outline-offset: 4px; }
+    #open-studio:disabled { opacity: .5; cursor: wait; }
+    a { color: #b6c4ce; text-underline-offset: 4px; }
+    .studio-return { margin-top: 22px; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="studio-eyebrow">VAN GOGH STRIKE</p>
+    <h1>Meet the artists.</h1>
+    <p>Explore the faces, clothing and movement of twelve artists in the game’s imagined world.</p>
+    <button id="open-studio" type="button" disabled>Opening the studio…</button>
+    <p class="studio-return"><a href="./">Return to the town</a></p>
+    <p id="studio-error" role="status" hidden></p>
+  </main>
+  <script type="module">
+    const button = document.querySelector('#open-studio');
+    const error = document.querySelector('#studio-error');
+    try {
+      const {createCharacterInspector} = await import('./src/character-inspector.js');
+      const studio = createCharacterInspector();
+      // QA: chooseArtist('cezanne' or {team:0,role:'anchor'}), setMode('face'|'full'|'walk'|'crouch'), state(), screenshot().
+      window.characterStudio = studio;
+      const params = new URLSearchParams(location.search);
+      const selection = {team: Number(params.get('team') || 0), role: params.get('role') || 'vanguard'};
+      if (params.has('mode')) studio.setMode(params.get('mode'));
+      button.disabled = false;
+      button.textContent = 'Explore the artists';
+      button.addEventListener('click', () => studio.open());
+      studio.open(selection);
+      if (params.has('artist')) studio.chooseArtist(params.get('artist'));
+    } catch (reason) {
+      button.textContent = 'Studio unavailable';
+      error.hidden = false;
+      error.textContent = 'The studio could not load. Reload the page to try again.';
+      window.characterStudioError = reason?.message || String(reason);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Van Gogh Strike · portrait renderer</title>
+<style>
+  html, body { margin: 0; min-height: 100%; background: #20242a; color: #dce2e8; font: 13px system-ui, sans-serif; }
+  body { display: grid; justify-items: center; }
+  canvas { display: block; max-width: 100vw; height: auto; background: repeating-conic-gradient(#252b32 0 25%, #29313a 0 50%) 0 / 24px 24px; }
+  p { margin: 12px 18px; }
+</style>
+<script type="importmap">{"imports":{"three":"/vendor/three.module.js","three/addons/":"/vendor/addons/"}}</script>
+<p id="status" role="status">Loading the final character modules…</p>
+<script>
+  window.portraitRender = {state: {ready: false, busy: false, phase: 'loading', error: null, roster: [], renderedFrames: 0}};
+</script>
+<script type="module">
+  const api = window.portraitRender;
+  const state = api.state;
+  const status = document.querySelector('#status');
+  let renderPortrait;
+  api.render = async (index, mode = 'card') => {
+    await api.ready;
+    return renderPortrait(index, mode);
+  };
+  api.ready = (async () => {
+    // Imported once; actors.js awaits its shared GLB asset cache before resolving.
+    const [THREE, {createActorModel, bodyProfile}, {FACTIONS}, {RoomEnvironment}] = await Promise.all([
+      import('three'), import('/src/actors.js'), import('/src/factions.js'),
+      import('three/addons/environments/RoomEnvironment.js'),
+    ]);
+    const roster = FACTIONS.flatMap(faction => faction.roster.map(member => ({faction, member})));
+    state.roster = roster.map(({faction, member}, index) => ({
+      index, id: member.design?.id || `${faction.id}-${member.role}`, name: member.name,
+      team: faction.id, role: member.role, age1888: member.age1888,
+    }));
+    const scene = new THREE.Scene();
+    const renderer = new THREE.WebGLRenderer({alpha: true, antialias: true, preserveDrawingBuffer: true, powerPreference: 'high-performance'});
+    renderer.setPixelRatio(1);
+    renderer.setSize(768, 896);
+    renderer.setClearColor(0x000000, 0);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.localClippingEnabled = true;
+    renderer.domElement.setAttribute('aria-label', 'Rendered character portrait');
+    document.body.prepend(renderer.domElement);
+    const camera = new THREE.PerspectiveCamera(32, 768 / 896, 0.02, 30);
+    const room = new RoomEnvironment();
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const environment = pmrem.fromScene(room, 0.08);
+    scene.environment = environment.texture;
+    scene.environmentIntensity = 0.18;
+    room.dispose();
+    pmrem.dispose();
+    scene.add(new THREE.HemisphereLight('#dde8f6', '#706252', 0.60));
+    const key = new THREE.DirectionalLight('#fff0dd', 2.5);
+    key.position.set(-3.2, 5.0, -4.2);
+    key.target.position.set(0, 1.3, 0);
+    key.castShadow = true;
+    key.shadow.mapSize.set(2048, 2048);
+    Object.assign(key.shadow.camera, {left: -1.6, right: 1.6, top: 2.4, bottom: -1.3, near: 0.1, far: 12});
+    key.shadow.bias = -0.00018;
+    key.shadow.normalBias = 0.004;
+    key.shadow.radius = 4;
+    const fill = new THREE.DirectionalLight('#d6e4f7', 0.45);
+    fill.position.set(3, 2.5, -2);
+    const rim = new THREE.DirectionalLight('#e8e4d9', 1.2);
+    rim.position.set(1.5, 3.7, 3);
+    scene.add(key, key.target, fill, rim);
+    state.lighting = {exposure: 1.0, environment: 0.18, key: 2.5, fill: 0.45, rim: 1.2, hemisphere: 0.60};
+    let model = null;
+    let materialOverrides = [];
+    const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve));
+
+    function releaseModel() {
+      // Restore actor-owned materials before its disposer runs. Shared texture
+      // caches are the actor's responsibility, never recursively disposed here.
+      for (const {mesh, original, clones} of materialOverrides) {
+        mesh.material = original;
+        clones.forEach(material => material.dispose());
+      }
+      materialOverrides = [];
+      model?.dispose();
+      model = null;
+      renderer.renderLists.dispose();
+    }
+
+    function headRoot(group) {
+      const explicit = group.getObjectByName('head and portrait details');
+      if (explicit) return explicit;
+      let head;
+      group.traverse(object => { if (!head && object.userData.blender) head = object; });
+      while (head?.parent && head.parent !== group && head.parent.name !== 'upper body aim') head = head.parent;
+      return head;
+    }
+
+    function descendants(root) {
+      const objects = new Set();
+      root.traverse(object => objects.add(object));
+      return objects;
+    }
+
+    function headAndNeckOnly(head, neckBase) {
+      const keep = descendants(head);
+      const torso = model.group.getObjectByName('layered coat and equipment');
+      const torsoParts = torso ? descendants(torso) : new Set();
+      const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -neckBase);
+      model.group.traverse(mesh => {
+        if (!mesh.isMesh && !mesh.isSprite) return;
+        if (keep.has(mesh)) return;
+        if (!torsoParts.has(mesh)) { mesh.visible = false; return; }
+        // Retain the actual model's neck above its collar; the beard and hat
+        // belong to the untouched head tree and are never clipped by this plane.
+        const original = mesh.material;
+        const clone = material => {
+          const copy = material.clone();
+          copy.onBeforeCompile = material.onBeforeCompile;
+          copy.customProgramCacheKey = material.customProgramCacheKey;
+          copy.clippingPlanes = [plane];
+          copy.clipShadows = true;
+          copy.needsUpdate = true;
+          return copy;
+        };
+        const copies = Array.isArray(original) ? original.map(clone) : [clone(original)];
+        mesh.material = Array.isArray(original) ? copies : copies[0];
+        materialOverrides.push({mesh, original, clones: copies});
+      });
+    }
+
+    function relaxCardArms(profile) {
+      const down = new THREE.Vector3(0, -1, 0);
+      const joints = [];
+      model.group.updateMatrixWorld(true);
+      for (const [label, side] of [['left', -1], ['right', 1]]) {
+        const upperArm = model.group.getObjectByName(`${label} upper arm`);
+        const forearm = model.group.getObjectByName(`${label} forearm and glove`);
+        if (!upperArm || !forearm || upperArm.parent !== forearm.parent) throw new Error(`Cannot locate the ${label} arm joints for the card pose.`);
+        const shoulder = upperArm.position.clone();
+        const length = 0.285 * profile.armScale;
+        const parentInverse = upperArm.parent.getWorldQuaternion(new THREE.Quaternion()).invert();
+        const gravity = down.clone().applyQuaternion(parentInverse).normalize();
+        const sideAxis = new THREE.Vector3(side, 0, 0);
+        sideAxis.addScaledVector(gravity, -sideAxis.dot(gravity)).normalize();
+        // The existing waist and forearm thickness determine the small lateral
+        // clearance. Fuller torsos do not force a hanging forearm through cloth.
+        const bodyHalfWidth = Math.max(0.19 * profile.waistScale, 0.16 * profile.hipScale);
+        const clearance = Math.max(0.014, bodyHalfWidth + 0.070 * profile.armWidth + 0.018 - Math.abs(shoulder.x));
+        const spread = THREE.MathUtils.clamp(clearance / length, 0.035, 0.46);
+        const upperDirection = gravity.clone().multiplyScalar(Math.sqrt(1 - spread * spread)).addScaledVector(sideAxis, spread);
+        upperArm.quaternion.setFromUnitVectors(down, upperDirection);
+        forearm.position.copy(shoulder).addScaledVector(upperDirection, length);
+        forearm.quaternion.setFromUnitVectors(down, gravity);
+        joints.push({side: label, shoulder: shoulder.toArray(), elbow: forearm.position.toArray(), upperArmLength: length});
+      }
+      state.cardArmJoints = joints;
+    }
+
+    function corners(box) {
+      const result = [];
+      for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y])
+        for (const z of [box.min.z, box.max.z]) result.push(new THREE.Vector3(x, y, z));
+      return result;
+    }
+
+    function fitCamera(box, mode) {
+      const target = box.getCenter(new THREE.Vector3());
+      const azimuth = mode === 'face' ? -0.42 : -0.16;
+      const elevation = mode === 'face' ? 0.035 : 0.025;
+      const away = new THREE.Vector3(Math.sin(azimuth) * Math.cos(elevation), Math.sin(elevation), -Math.cos(azimuth) * Math.cos(elevation));
+      camera.position.copy(target).add(away);
+      camera.lookAt(target);
+      camera.updateMatrixWorld(true);
+      const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0);
+      const up = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1);
+      const tanY = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+      const tanX = tanY * camera.aspect;
+      let distance = 0.3;
+      for (const point of corners(box)) {
+        const delta = point.sub(target), towardCamera = delta.dot(away);
+        distance = Math.max(distance, towardCamera + Math.abs(delta.dot(right)) / (tanX * 0.90), towardCamera + Math.abs(delta.dot(up)) / (tanY * 0.90));
+      }
+      camera.position.copy(target).addScaledVector(away, distance);
+      camera.lookAt(target);
+      camera.updateMatrixWorld(true);
+      state.camera = {azimuth, elevation, target: target.toArray(), position: camera.position.toArray(), fov: camera.fov};
+    }
+
+    renderPortrait = async (index, mode = 'card') => {
+      if (!state.ready || state.phase === 'disposed') throw new Error('The portrait renderer is unavailable; reload its page.');
+      if (state.busy) throw new Error('A portrait is already rendering; await it before requesting another.');
+      if (!Number.isInteger(index) || index < 0 || index >= roster.length) throw new RangeError(`Artist index must be 0–${roster.length - 1}.`);
+      if (!['card', 'face'].includes(mode)) throw new RangeError('Mode must be card or face.');
+      state.busy = true;
+      state.phase = 'rendering';
+      state.error = null;
+      try {
+        releaseModel();
+        const {faction, member} = roster[index];
+        const profile = bodyProfile(member.look);
+        model = createActorModel(scene, {team: faction.id, color: faction.color, role: member.role, look: member.look, name: member.shortName});
+        const attachedHeads = [];
+        model.group.traverse(object => {
+          if (object.userData.blender) attachedHeads.push(object.userData.designId);
+          if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; }
+        });
+        const attachedDesignId = attachedHeads[0];
+        if (attachedHeads.length !== 1 || attachedDesignId !== member.design?.id) {
+          throw new Error(`${member.name}: expected one refined ${member.design?.id} head; found ${JSON.stringify(attachedHeads)}. Wait for the final actor integration.`);
+        }
+        const actor = {
+          position: new THREE.Vector3(), velocity: new THREE.Vector3(), yaw: 0, pitch: 0,
+          team: faction.id, role: member.role, identity: member, artistName: member.name,
+          alive: true, grounded: true, crouched: false, ads: false, aiming: false, ammo: 30,
+          reloadUntil: 0, protectedUntil: 0, lastShotAt: -Infinity, lastDamageAt: -Infinity,
+          lastSprayAt: -Infinity, sprayUntil: 0, tauntStarted: -Infinity, tauntUntil: 0,
+        };
+        // A fixed phase and settling sequence gives repeatable portraits without
+        // dependence on wall-clock time, previous artist or animation frame rate.
+        for (let step = 0; step < 18; step++) model.update(1 / 60, actor, 2 + step / 60, camera);
+        state.cardArmJoints = null;
+        if (mode === 'card') relaxCardArms(profile);
+        model.marker && (model.marker.visible = false);
+        model.shadow && (model.shadow.visible = false);
+        model.setIndicator?.({visible: false});
+        const weapon = model.group.getObjectByName('carried weapon motion');
+        if (weapon) weapon.visible = false;
+        model.group.traverse(object => {
+          if (object.morphTargetDictionary?.Blink !== undefined) object.morphTargetInfluences[object.morphTargetDictionary.Blink] = 0;
+        });
+        model.group.updateMatrixWorld(true);
+        const head = headRoot(model.group);
+        if (!head) throw new Error('The integrated actor has no identifiable head group.');
+        const headBox = new THREE.Box3().setFromObject(head, true);
+        if (headBox.isEmpty()) throw new Error('The character head has empty bounds.');
+        const pose = model.state.pose || profile.standingPose;
+        const neckBase = head.getWorldPosition(new THREE.Vector3()).y - 0.083 * profile.torsoScale;
+        const frame = headBox.clone();
+        if (mode === 'face') {
+          headAndNeckOnly(head, neckBase);
+          frame.min.y = Math.min(frame.min.y, neckBase);
+          frame.expandByVector(new THREE.Vector3(0.015, 0.014, 0.01));
+        } else {
+          const shoulderHalf = 0.34 * profile.shoulderScale;
+          frame.min.x = Math.min(frame.min.x, -shoulderHalf);
+          frame.max.x = Math.max(frame.max.x, shoulderHalf);
+          frame.min.y = Math.min(frame.min.y, pose.chest[1] - 0.065 * profile.torsoScale);
+          frame.min.z = Math.min(frame.min.z, pose.chest[2] - 0.19 * profile.depthScale);
+          frame.max.z = Math.max(frame.max.z, pose.chest[2] + 0.13 * profile.depthScale);
+          frame.max.y += 0.012;
+        }
+        const width = 768, height = mode === 'face' ? 768 : 896;
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        fitCamera(frame, mode);
+        if (renderer.compileAsync) await renderer.compileAsync(scene, camera);
+        else renderer.compile(scene, camera);
+        // Texture upload and shadow allocation complete before the captured frame.
+        for (let pass = 0; pass < 3; pass++) {
+          await nextFrame();
+          renderer.render(scene, camera);
+          state.renderedFrames++;
+        }
+        renderer.getContext().finish();
+        const projected = corners(headBox).map(point => point.project(camera));
+        const bounds = {
+          left: Math.min(...projected.map(point => (point.x + 1) * width / 2)),
+          right: Math.max(...projected.map(point => (point.x + 1) * width / 2)),
+          top: Math.min(...projected.map(point => (1 - point.y) * height / 2)),
+          bottom: Math.max(...projected.map(point => (1 - point.y) * height / 2)),
+        };
+        if (bounds.left < 3 || bounds.top < 3 || bounds.right > width - 3 || bounds.bottom > height - 3) throw new Error('Head or hat is too close to the output edge.');
+        Object.assign(state, {phase: 'rendered', index, mode, id: attachedDesignId, attachedDesignId, name: member.name,
+          team: faction.id, role: member.role, refined: true, width, height, headPixels: bounds,
+          geometryCount: renderer.info.memory.geometries, drawCalls: renderer.info.render.calls,
+          triangles: renderer.info.render.triangles, fixedPoseTime: 2 + 17 / 60,
+          cardArmPose: mode === 'card' ? 'relaxed-hanging' : null});
+        status.textContent = `${member.name} · ${mode} · ${width} × ${height} · refined model`;
+        renderer.domElement.setAttribute('aria-label', `${member.name}, ${mode === 'face' ? 'three-quarter face' : 'selection card'} portrait`);
+        return renderer.domElement.toDataURL('image/png');
+      } catch (error) {
+        state.phase = 'error';
+        state.error = error.message;
+        status.textContent = error.message;
+        releaseModel();
+        throw error;
+      } finally {
+        state.busy = false;
+      }
+    };
+    api.dispose = () => {
+      if (state.busy) throw new Error('Wait for the current render before disposing.');
+      releaseModel();
+      environment.dispose();
+      key.shadow.map?.dispose();
+      renderer.dispose();
+      state.ready = false;
+      state.phase = 'disposed';
+    };
+    renderer.domElement.addEventListener('webglcontextlost', event => {
+      event.preventDefault();
+      state.error = 'WebGL context lost. Reload the renderer before continuing.';
+      state.phase = 'error';
+      state.ready = false;
+    });
+    state.ready = true;
+    state.phase = 'ready';
+    status.textContent = `Ready · ${roster.length} artists · call portraitRender.render(index, 'card' or 'face')`;
+    return state;
+  })();
+  api.ready.catch(error => {
+    state.error = error.message;
+    state.phase = 'error';
+    status.textContent = `Character loading failed: ${error.message}`;
+  });
+</script>
+</html>

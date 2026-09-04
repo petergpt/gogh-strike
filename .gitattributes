@@ -1,0 +1,7 @@
+* text=auto
+*.glb binary
+*.png binary
+*.webp binary
+# Preserve the authoritative town source exactly, including its checksum.
+/reference/van-goghs-town.original.html -text
+/src/map.js -text

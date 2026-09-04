@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#112b35">
+  <meta name="description" content="Pick an artist. Join your crew. A quick paint fight in Van Gogh's Town.">
+  <title>Gogh Strike · Paint Clash</title>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Gogh Strike · Paint Clash">
+  <meta property="og:description" content="Twelve artists. Two rival crews. A quick paint fight through Van Gogh’s Town.">
+  <meta property="og:url" content="https://gogh-strike.surge.sh/">
+  <link rel="canonical" href="https://gogh-strike.surge.sh/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23112b35'/%3E%3Cpath d='M13 44 25 15l7 24 15-26-6 36' fill='none' stroke='%23efc56b' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./src/style.css">
+  <script type="importmap">{"imports":{"three":"/vendor/three.module.js","three/addons/":"/vendor/addons/"}}</script>
+</head>
+<body data-screen="menu">
+  <div id="world-veil" aria-hidden="true"></div>
+  <div id="loading-screen" role="status"><div class="gogh-wordmark loading-wordmark" aria-label="Gogh Strike"><span>GOGH</span><span>STRIKE</span></div><p id="loading-text">Opening the town…</p></div>
+  <div id="game-ui">
+    <header class="menu-brand menu-only"><a href="#" id="brand-home" aria-label="Van Gogh Strike home"><span class="gogh-wordmark menu-wordmark"><span>GOGH</span><span>STRIKE</span></span></a><button class="settings-open quiet-button">Settings</button></header>
+    <main id="main-menu" class="menu-only" aria-label="Choose your artist">
+      <div class="lobby-heading"><div><p class="eyebrow">VAN GOGH’S TOWN</p><h1>Paint Clash<span>.</span></h1></div><p class="match-promise">First to <b>20</b><span>3 minutes · Quick respawns</span></p></div>
+      <div id="faction-options" class="faction-options" role="group" aria-label="Choose your crew"></div>
+      <div class="selection-heading"><h2>Pick your artist</h2><p>One artist. One signature weapon.</p></div>
+      <div id="artist-options" class="artist-options" role="group" aria-label="Choose your artist"></div>
+      <section class="selection-kit" aria-label="Your artist’s equipment">
+        <div class="kit-content">
+          <div class="primary-kit"><div id="primary-preview" class="weapon-preview" aria-label="Signature weapon preview"></div><div class="primary-description"><div><span id="selected-weapon-class" class="eyebrow">ASSAULT RIFLE</span><strong id="selected-weapon">Provençal</strong></div><div class="primary-stats"><span id="selected-magazine">28 rounds</span><span id="selected-fire-type">Automatic</span></div></div></div>
+          <div class="secondary-kit"><span class="eyebrow">SIDEARM</span><div id="secondary-preview" class="weapon-preview"></div><b id="selected-sidearm">Atelier</b><span>Pistol</span></div>
+          <div class="art-kit"><span class="eyebrow">YOUR ART TAG</span><img id="selected-art-tag" alt="" width="68" height="68"><b id="selected-tag-name"></b><span><kbd>T</kbd> Spray a wall</span></div>
+        </div>
+        <div class="kit-play"><div class="selected-artist"><span class="eyebrow">YOU’RE PLAYING</span><strong id="selected-artist-name">Van Gogh</strong><button id="inspect-artist" class="inspect-artist" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8" cy="8" r="5"/><path d="m12 12 5 5M8 5v6M5 8h6"/></svg>Inspect artist</button><span class="kit-taunt"><kbd>J</kbd><span id="selected-taunt-name">Sunflower spin</span></span></div><button id="deploy-button" class="primary-button" disabled>Play <span aria-hidden="true">↗</span></button></div>
+      </section>
+      <div class="rival-preview"><div id="enemy-portraits" class="enemy-portraits" aria-hidden="true"></div><p>Against <strong id="enemy-faction-name">The Independents</strong><span>Real artists. An entirely imagined paint fight.</span></p></div>
+    </main>
+    <footer class="menu-footer menu-only">WASD to move <span>·</span> Mouse to aim & fire <span>·</span> Shift to sprint <span>·</span> C to crouch</footer>
+
+    <div id="hud" class="play-only" aria-label="Match information">
+      <div class="score-ribbon"><div class="team-score friendly"><i id="friendly-team-crest" class="team-crest" aria-hidden="true"></i><span>YOUR CREW <small id="friendly-team-name"></small></span><b id="friendly-score">0</b></div><div class="score-center"><b id="match-timer">3:00</b><span id="score-target">FIRST TO 20</span></div><div class="team-score enemy"><b id="enemy-score">0</b><span>ENEMY <small id="enemy-team-name"></small></span><i id="enemy-team-crest" class="team-crest" aria-hidden="true"></i></div></div>
+      <div id="kill-feed" class="kill-feed" aria-live="polite" aria-label="Recent eliminations"></div>
+      <div id="scope-overlay" class="scope-overlay" aria-hidden="true"><div class="scope-lens"><i></i><b></b></div></div>
+      <div id="crosshair" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b></div>
+      <div id="hit-marker" aria-hidden="true">×</div><div id="hit-confirmation" aria-hidden="true"></div><div id="damage-vignette" aria-hidden="true"></div>
+      <div id="announcement" class="announcement" role="status"></div>
+      <div id="spawn-protection" class="spawn-protection" role="img" aria-label="Brief spawn protection" title="Brief spawn protection"><svg viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6z"/><path d="m8 12 3 3 5-6"/></svg></div>
+      <section class="health-panel" aria-label="Your health"><div id="player-avatar" class="player-avatar"></div><div class="health-main"><div class="health-heading"><b id="health-value">100</b><span id="player-name">Van Gogh</span></div><div class="health-track" role="progressbar" aria-label="Health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><i id="health-fill"></i></div><div class="secondary-vitals"><span title="Armour"><svg viewBox="0 0 24 24"><path d="m12 3 7 3v6c0 5-7 8-7 8s-7-3-7-8V6z"/></svg><i><b id="armor-fill"></b></i></span><span title="Stamina"><svg viewBox="0 0 24 24"><path d="m13 2-7 11h6l-1 9 7-12h-6z"/></svg><i><b id="stamina-fill"></b></i></span></div></div></section>
+      <section class="weapon-panel" aria-label="Your ammunition"><div class="weapon-title"><span id="hud-weapon-icon"></span><b id="hud-weapon-name">Provençal</b></div><div class="ammo-row"><b id="ammo-current">28</b><span>/ <span id="ammo-reserve">140</span></span></div><div id="reload-state"><kbd>R</kbd><span id="reload-label">Reload</span><i><b id="reload-fill"></b></i></div><div id="weapon-slots" class="weapon-slots" aria-label="Carried weapons"></div></section>
+      <div id="utility-hud" class="utility-hud" aria-label="Abilities"></div>
+      <div id="interaction-hud" class="interaction-hud" role="status"><span id="interaction-label">Healing</span><i><b id="interaction-fill"></b></i></div>
+      <div id="cosmetic-hud" class="cosmetic-hud"><div id="spray-hud" class="spray-hud" aria-label="Your art tag"><kbd>T</kbd><img id="spray-hud-image" alt="" width="25" height="25"><span id="spray-status">Spray</span></div><div id="taunt-hud" class="taunt-hud" aria-label="J: taunt dance"><kbd>J</kbd><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="14" cy="4" r="2.3"/><path d="m12 9 4 2 4-4M12 9 7 7 4 10m8-1-2 6 5 3 2 4m-7-7-4 3-2 4"/></svg><span id="taunt-status">Taunt</span></div></div><div class="match-help"><span><kbd>C</kbd> crouch</span><span><kbd>TAB</kbd> scores</span><span><kbd>ESC</kbd> pause</span></div>
+      <div id="respawn-panel" class="respawn-panel" role="status"><div class="respawn-message"><p>Back in <strong id="respawn-timer">2</strong></p><div class="death-credit"><div id="killer-avatar" class="killer-avatar"></div><span>Eliminated by <b id="killer-name">an opponent</b></span></div></div></div>
+      <button id="pointer-resume" class="pointer-resume">Click to play <span>Mouse look will be captured</span></button>
+    </div>
+
+    <section id="match-intro" class="match-intro" role="status" aria-live="polite" aria-label="Match starting" hidden>
+      <div class="intro-content">
+        <div class="intro-brand"><div class="gogh-wordmark intro-wordmark" aria-label="Gogh Strike"><span>GOGH</span><span>STRIKE</span></div></div>
+        <div class="intro-dial">
+          <svg class="intro-ring" viewBox="0 0 132 132" aria-hidden="true"><circle class="intro-ring-track" cx="66" cy="66" r="58"/><circle class="intro-ring-progress" cx="66" cy="66" r="58"/><circle class="intro-ring-accent" cx="66" cy="66" r="63"/></svg>
+          <div id="intro-count" class="intro-count" aria-hidden="true"><span class="intro-number">3</span></div>
+        </div>
+        <div id="intro-crews" class="intro-crews"><i id="intro-yellow-crest" aria-hidden="true"></i><i id="intro-independent-crest" aria-hidden="true"></i></div>
+      </div>
+    </section>
+
+    <section id="pause-panel" class="overlay-panel" role="dialog" aria-modal="true" aria-label="Game paused" hidden><div class="modal-card pause-card"><div class="panel-brand"><div class="gogh-wordmark panel-wordmark" aria-label="Gogh Strike"><span>GOGH</span><span>STRIKE</span></div></div><h2>Paused.</h2><button id="resume-button" class="primary-button">Resume <span>↗</span></button><div class="pause-actions"><button class="settings-open secondary-button">Settings</button><button id="pause-menu" class="secondary-button">Change artist</button></div><details class="controls-details"><summary>Controls <span aria-hidden="true">+</span></summary><div class="controls-grid"><span><kbd>WASD</kbd>Move</span><span><kbd>MOUSE</kbd>Aim & fire</span><span><kbd>RIGHT CLICK</kbd>Aim closer</span><span><kbd>SHIFT</kbd>Sprint</span><span><kbd>SPACE</kbd>Jump</span><span><kbd>C</kbd>Crouch</span><span><kbd>R</kbd>Reload</span><span><kbd>Q</kbd>Smoke</span><span><kbd>G</kbd>Paint bomb</span><span><kbd>H</kbd>Hold to heal</span><span><kbd>T</kbd>Spray art tag</span><span><kbd>J</kbd>Dance / cancel</span><span><kbd>1 / 2</kbd>Switch weapon</span><span><kbd>TAB</kbd>Scoreboard</span></div></details><button id="pause-restart" class="quiet-button">Restart match</button></div></section>
+    <section id="settings-panel" class="overlay-panel" role="dialog" aria-modal="true" aria-label="Settings" hidden><div class="modal-card settings-card"><div class="panel-brand"><div class="gogh-wordmark panel-wordmark" aria-label="Gogh Strike"><span>GOGH</span><span>STRIKE</span></div></div><div class="modal-heading"><h2>Settings.</h2><button id="close-settings" class="close-button" aria-label="Close settings">×</button></div><label for="sensitivity">Mouse sensitivity <output id="sensitivity-output">1.00×</output></label><input id="sensitivity" type="range" min="0.25" max="2.5" step="0.05" value="1"><label for="volume">Sound <output id="volume-output">65%</output></label><input id="volume" type="range" min="0" max="1" step="0.05" value="0.65"><p class="setting-label">Brushwork quality</p><div class="quality-options" role="group" aria-label="Graphics quality"><button data-graphics="performance">Light</button><button data-graphics="balanced">Balanced</button><button data-graphics="full">Rich</button></div><button id="settings-done" class="primary-button">Done <span>✓</span></button></div></section>
+    <section id="scoreboard-panel" class="overlay-panel scoreboard-overlay" role="dialog" aria-label="Match scores" hidden><div class="modal-card scoreboard-card"><div class="panel-brand"><div class="gogh-wordmark panel-wordmark" aria-label="Gogh Strike"><span>GOGH</span><span>STRIKE</span></div></div><div class="modal-heading"><h2>The score.</h2><span class="scoreboard-hint">Hold <kbd>TAB</kbd></span></div><div id="scoreboard-teams" class="scoreboard-teams"></div></div></section>
+    <section id="results-panel" class="overlay-panel" role="dialog" aria-modal="true" aria-label="Match results" hidden><div class="modal-card results-card"><div class="panel-brand"><div class="gogh-wordmark panel-wordmark" aria-label="Gogh Strike"><span>GOGH</span><span>STRIKE</span></div></div><h2 id="result-title">Your crew wins.</h2><div class="results-score"><span class="friendly"><small><i id="result-friendly-crest" class="team-crest" aria-hidden="true"></i><span id="result-friendly-name"></span></small><b id="result-friendly-score">20</b></span><i>—</i><span class="enemy"><small><i id="result-enemy-crest" class="team-crest" aria-hidden="true"></i><span id="result-enemy-name"></span></small><b id="result-enemy-score">12</b></span></div><div class="result-player"><div id="result-avatar"></div><div><b id="result-artist"></b><span id="result-performance"></span></div></div><button id="rematch-button" class="primary-button">Play again <span>↗</span></button><button id="results-menu" class="secondary-button">Change artist</button></div></section>
+    <div id="toast" class="toast" role="status"></div>
+    <div id="fatal-error" class="overlay-panel" role="alert" hidden><div class="modal-card"><div class="panel-brand"><div class="gogh-wordmark panel-wordmark" aria-label="Gogh Strike"><span>GOGH</span><span>STRIKE</span></div></div><h2>A little paint spill.</h2><p id="fatal-error-message"></p><button class="primary-button" onclick="location.reload()">Try again</button></div></div>
+  </div>
+  <script>
+    function showBootError(error){document.body.classList.add('ready');document.getElementById('fatal-error').hidden=false;document.getElementById('fatal-error-message').textContent=error?.message||String(error||'Reload to reopen the town.');}
+    addEventListener('error',event=>{if(event.error||event.message)showBootError(event.error||event.message);});
+    addEventListener('unhandledrejection',event=>showBootError(event.reason));
+  </script>
+  <script type="module" src="./src/game.js" onerror="showBootError(new Error('The game could not load. Please try again.'))"></script>
+</body>
+</html>
