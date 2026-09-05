@@ -6,6 +6,8 @@ A painterly six-versus-six browser shooter set in Van Gogh’s Town. Pick an art
 
 ### [Play Gogh Strike →](https://gogh-strike.surge.sh/)
 
+Also playable on [ChatGPT Sites](https://gogh-strike.petergostev.chatgpt.site/).
+
 No install required · Desktop keyboard and mouse · Single-player with bots
 
 ![First-person gameplay on the golden café terrace, with rival artists, a Provençal rifle and the match HUD.](docs/screenshots/gameplay.png)
@@ -82,6 +84,8 @@ surge dist https://your-game.surge.sh
 ```
 
 [Development notes](docs/DEVELOPMENT.md) cover the architecture and character tools. Prebuilt GLBs and portraits are checked in. The Blender builders and official CC0 anatomy sources are included so you can regenerate the models and an editable `.blend` scene; Blender is not needed to run the game.
+
+For ChatGPT Sites, the existing `.openai/hosting.json` selects the static `dist/` build. When publishing your own fork, remove its `project_id` so Sites creates a separate site for you.
 
 ## License and source
 
