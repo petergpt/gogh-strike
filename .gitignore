@@ -2,6 +2,9 @@
 /*
 !/.gitignore
 !/.gitattributes
+!/.openai/
+/.openai/*
+!/.openai/hosting.json
 !/README.md
 !/CNAME
 !/LICENSE
